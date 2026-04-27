@@ -38,13 +38,25 @@ rewrite your code. You decide what to fix.
 pip install commit-review
 ```
 
-Then set an API key for one provider:
+Then pick a provider. **Three of the five are free:**
+
+| Provider  | Free? | How to get a key                                              |
+|-----------|:-----:|---------------------------------------------------------------|
+| Gemini    | ✅    | https://aistudio.google.com/app/apikey (no card needed)       |
+| Groq      | ✅    | https://console.groq.com/keys (fast Llama 3.3 70B)            |
+| Ollama    | ✅    | fully local — `brew install ollama && ollama serve`           |
+| Anthropic | 💳    | https://console.anthropic.com/settings/keys                   |
+| OpenAI    | 💳    | https://platform.openai.com/api-keys                          |
 
 ```bash
-export ANTHROPIC_API_KEY=...      # default
-# or
-export OPENAI_API_KEY=...
-export GEMINI_API_KEY=...
+# Default provider is Gemini (free).
+export GEMINI_API_KEY=AIza...
+
+# Or any of:
+export GROQ_API_KEY=gsk_...
+export ANTHROPIC_API_KEY=sk-ant-...
+export OPENAI_API_KEY=sk-...
+# Ollama needs no env var, just `ollama serve` running on localhost:11434.
 ```
 
 ## Usage
@@ -77,8 +89,8 @@ commit-review install-hook
 Drop `.commit-review.yml` at repo root:
 
 ```yaml
-provider: anthropic         # anthropic | openai | gemini
-model: claude-sonnet-4-6    # optional override
+provider: gemini            # gemini | groq | ollama | anthropic | openai
+model: gemini-2.0-flash     # optional override
 skip_build: false
 skip_steps: []              # e.g. [7, 8] to drop naming + pattern nits
 max_diff_bytes: 200000

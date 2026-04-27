@@ -102,6 +102,83 @@ class OpenAIProvider:
 
 
 @dataclass
+class GroqProvider:
+    """Groq: free, fast, OpenAI-compatible. https://console.groq.com/keys"""
+
+    model: str = "llama-3.3-70b-versatile"
+    api_key_env: str = "GROQ_API_KEY"
+    name: str = "groq"
+
+    def chat(self, system: str, user: str) -> str:
+        key = os.environ.get(self.api_key_env)
+        if not key:
+            raise ProviderError(f"missing {self.api_key_env}")
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "temperature": 0.1,
+        }
+        headers = {
+            "Authorization": f"Bearer {key}",
+            "content-type": "application/json",
+        }
+        try:
+            r = httpx.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=120,
+            )
+            r.raise_for_status()
+        except httpx.HTTPError as e:
+            raise ProviderError(f"groq request failed: {e}") from e
+        data = r.json()
+        try:
+            return data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError) as e:
+            raise ProviderError(f"unexpected groq response: {data}") from e
+
+
+@dataclass
+class OllamaProvider:
+    """Ollama: fully local, no key required. `ollama serve` must be running."""
+
+    model: str = "qwen2.5-coder:7b"
+    base_url: str = "http://localhost:11434"
+    name: str = "ollama"
+
+    def chat(self, system: str, user: str) -> str:
+        payload = {
+            "model": self.model,
+            "stream": False,
+            "options": {"temperature": 0.1},
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        }
+        try:
+            r = httpx.post(
+                f"{self.base_url}/api/chat",
+                json=payload,
+                timeout=300,
+            )
+            r.raise_for_status()
+        except httpx.HTTPError as e:
+            raise ProviderError(
+                f"ollama request failed: {e}. Is `ollama serve` running?"
+            ) from e
+        data = r.json()
+        try:
+            return data["message"]["content"]
+        except (KeyError, TypeError) as e:
+            raise ProviderError(f"unexpected ollama response: {data}") from e
+
+
+@dataclass
 class GeminiProvider:
     model: str = "gemini-1.5-flash"
     api_key_env: str = "GEMINI_API_KEY"
@@ -138,5 +215,11 @@ def build_provider(name: str, model: str | None = None) -> Provider:
     if name == "openai":
         return OpenAIProvider(model=model or "gpt-4o-mini")
     if name == "gemini":
-        return GeminiProvider(model=model or "gemini-1.5-flash")
-    raise ProviderError(f"unknown provider: {name!r} (use anthropic|openai|gemini)")
+        return GeminiProvider(model=model or "gemini-2.0-flash")
+    if name == "groq":
+        return GroqProvider(model=model or "llama-3.3-70b-versatile")
+    if name == "ollama":
+        return OllamaProvider(model=model or "qwen2.5-coder:7b")
+    raise ProviderError(
+        f"unknown provider: {name!r} (use anthropic|openai|gemini|groq|ollama)"
+    )

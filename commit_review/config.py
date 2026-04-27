@@ -10,7 +10,7 @@ import yaml
 
 @dataclass
 class Config:
-    provider: str = "anthropic"
+    provider: str = "gemini"
     model: str | None = None
     skip_build: bool = False
     skip_steps: list[int] = field(default_factory=list)

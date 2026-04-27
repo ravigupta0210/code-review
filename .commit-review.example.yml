@@ -1,14 +1,17 @@
 # Drop this file at your repo root as .commit-review.yml
 # All fields optional — shown here with defaults.
 
-# LLM provider: anthropic | openai | gemini
-provider: anthropic
+# LLM provider: gemini | groq | ollama | anthropic | openai
+# Defaults to `gemini` because it has a generous free tier (no card needed).
+provider: gemini
 
 # Override the default model for the chosen provider.
-# anthropic default: claude-sonnet-4-6
-# openai default:    gpt-4o-mini
-# gemini default:    gemini-1.5-flash
-# model: claude-sonnet-4-6
+# gemini default:    gemini-2.0-flash             (FREE tier — recommended)
+# groq default:      llama-3.3-70b-versatile      (FREE tier — fastest)
+# ollama default:    qwen2.5-coder:7b             (fully local — `ollama serve`)
+# anthropic default: claude-sonnet-4-6            (paid)
+# openai default:    gpt-4o-mini                  (paid)
+# model: gemini-2.0-flash
 
 # Skip `npm run build` / `go build ./...` / etc. during review.
 skip_build: false
