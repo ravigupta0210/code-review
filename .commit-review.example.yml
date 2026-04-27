@@ -1,0 +1,26 @@
+# Drop this file at your repo root as .commit-review.yml
+# All fields optional — shown here with defaults.
+
+# LLM provider: anthropic | openai | gemini
+provider: anthropic
+
+# Override the default model for the chosen provider.
+# anthropic default: claude-sonnet-4-6
+# openai default:    gpt-4o-mini
+# gemini default:    gemini-1.5-flash
+# model: claude-sonnet-4-6
+
+# Skip `npm run build` / `go build ./...` / etc. during review.
+skip_build: false
+
+# Drop specific checklist steps by number (1=manifest, 3=null-safety, 4=imports,
+# 5=name-collision, 6=logic, 7=naming, 8=better-pattern).
+skip_steps: []
+
+# Hard ceiling on how much diff to send to the model (bytes).
+max_diff_bytes: 200000
+
+# Extra review rules appended to the prompt. One string per rule.
+extra_rules:
+  # - "Flag any usage of `any` in TypeScript."
+  # - "Every new React component must have a corresponding test file."
