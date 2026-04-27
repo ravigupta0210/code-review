@@ -1,5 +1,10 @@
 # commit-review
 
+[![PyPI](https://img.shields.io/pypi/v/commit-review.svg)](https://pypi.org/project/commit-review/)
+[![CI](https://github.com/ravigupta0210/code-review/actions/workflows/ci.yml/badge.svg)](https://github.com/ravigupta0210/code-review/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/pypi/pyversions/commit-review.svg)](https://pypi.org/project/commit-review/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **A tiny, local-first alternative to CodeRabbit.** AI reviews your staged diff
 before it becomes a commit — catches null-pointer traps, leftover `console.log`,
 missing `await`, name collisions, unsafe imports, and pattern smells. BYO API

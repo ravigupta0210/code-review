@@ -190,22 +190,27 @@ class GeminiProvider:
             raise ProviderError(f"missing {self.api_key_env}")
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{self.model}:generateContent?key={key}"
+            f"{self.model}:generateContent"
         )
         payload = {
             "systemInstruction": {"parts": [{"text": system}]},
             "contents": [{"role": "user", "parts": [{"text": user}]}],
         }
+        headers = {"x-goog-api-key": key, "content-type": "application/json"}
         try:
-            r = httpx.post(url, json=payload, timeout=120)
+            r = httpx.post(url, headers=headers, json=payload, timeout=120)
             r.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise ProviderError(
+                f"gemini request failed: HTTP {e.response.status_code}"
+            ) from None
         except httpx.HTTPError as e:
-            raise ProviderError(f"gemini request failed: {e}") from e
+            raise ProviderError(f"gemini request failed: {type(e).__name__}") from None
         data = r.json()
         try:
             return data["candidates"][0]["content"]["parts"][0]["text"]
         except (KeyError, IndexError) as e:
-            raise ProviderError(f"unexpected gemini response: {data}") from e
+            raise ProviderError(f"unexpected gemini response shape") from e
 
 
 def build_provider(name: str, model: str | None = None) -> Provider:
