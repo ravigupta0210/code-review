@@ -6,7 +6,6 @@ provider SDKs unless they want to. BYO API key via env vars.
 
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import dataclass
 from typing import Protocol
@@ -210,7 +209,7 @@ class GeminiProvider:
         try:
             return data["candidates"][0]["content"]["parts"][0]["text"]
         except (KeyError, IndexError) as e:
-            raise ProviderError(f"unexpected gemini response shape") from e
+            raise ProviderError("unexpected gemini response shape") from e
 
 
 def build_provider(name: str, model: str | None = None) -> Provider:

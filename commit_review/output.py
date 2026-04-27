@@ -8,7 +8,7 @@ from rich.table import Table
 from rich.text import Text
 
 from .build_check import BuildResult
-from .reviewer import Finding, ReviewResult
+from .reviewer import ReviewResult
 
 console = Console()
 
@@ -22,7 +22,7 @@ SEVERITY_STYLE = {
 
 def print_manifest(branch: str, diffstat: str, suspicious: list[str]) -> None:
     body = Text()
-    body.append(f"Branch: ", style="bold")
+    body.append("Branch: ", style="bold")
     body.append(f"{branch}\n\n")
     body.append(diffstat.rstrip() or "(no staged changes)")
     if suspicious:
